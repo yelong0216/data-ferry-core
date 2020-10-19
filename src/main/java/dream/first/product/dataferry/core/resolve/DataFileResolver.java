@@ -27,7 +27,6 @@ public interface DataFileResolver {
 		} catch (FileNotFoundException e) {
 			throw new DataFileResolveException(e);
 		}
-
 	}
 
 	/**

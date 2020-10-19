@@ -6,10 +6,13 @@ import java.util.Date;
 import org.springframework.context.annotation.Bean;
 import org.yelong.core.data.string.StringDataTypeConvertorManager;
 import org.yelong.core.data.string.StringDateDataTypeConvertor;
+import org.yelong.core.data.string.StringDoubleDataTypeConvertor;
+import org.yelong.core.data.string.StringIntegerDataTypeConvertor;
 import org.yelong.core.data.string.StringTimestampDataTypeConvertor;
 import org.yelong.core.model.manage.ModelManager;
 import org.yelong.core.model.property.ModelProperty;
 
+import dream.first.product.dataferry.core.configuration.xml.XMLDataFerryConfig;
 import dream.first.product.dataferry.core.data.DataObjectSourceFactory;
 import dream.first.product.dataferry.core.data.attribute.DataObjectOrdinaryAttributeManager;
 import dream.first.product.dataferry.core.data.attribute.impl.DefaultDataObjectOrdinaryAttributeManager;
@@ -22,11 +25,11 @@ import dream.first.product.dataferry.core.data.operate.impl.DefaultDataObjectSou
 import dream.first.product.dataferry.core.ferry.DataFerry;
 import dream.first.product.dataferry.core.ferry.impl.DefaultDataFerry;
 import dream.first.product.dataferry.core.generate.DataFileGenerator;
-import dream.first.product.dataferry.core.generate.impl.DefaultDataFileGenerator;
+import dream.first.product.dataferry.core.generate.xml.DefaultXMLDataFileGenerator;
 import dream.first.product.dataferry.core.resolve.DataFileResolver;
-import dream.first.product.dataferry.core.resolve.xml.DataNodeResolver;
-import dream.first.product.dataferry.core.resolve.xml.DefaultDataFileResolver;
-import dream.first.product.dataferry.core.resolve.xml.DefaultDataNodeResolver;
+import dream.first.product.dataferry.core.resolve.xml.DefaultXMLDataFileResolver;
+import dream.first.product.dataferry.core.resolve.xml.node.DataNodeResolver;
+import dream.first.product.dataferry.core.resolve.xml.node.DefaultDataNodeResolver;
 
 public class DataFerryCoreConfiguration {
 
@@ -38,6 +41,8 @@ public class DataFerryCoreConfiguration {
 		stringDataTypeConvertorManager.registerDataTypeConvertor(Date.class, new StringDateDataTypeConvertor());
 		stringDataTypeConvertorManager.registerDataTypeConvertor(Timestamp.class,
 				new StringTimestampDataTypeConvertor());
+		stringDataTypeConvertorManager.registerDataTypeConvertor(Integer.class, new StringIntegerDataTypeConvertor());
+		stringDataTypeConvertorManager.registerDataTypeConvertor(Double.class, new StringDoubleDataTypeConvertor());
 		return stringDataTypeConvertorManager;
 	}
 
@@ -46,26 +51,6 @@ public class DataFerryCoreConfiguration {
 	@Bean
 	public ModelDataObjectSourceFactory modelDataObjectSourceFactory() {
 		return new DefaultModelDataObjectSourceFactory();
-	}
-
-	// ==================================================数据文件解析器==================================================
-
-	@Bean
-	public DataNodeResolver dataNodeResolver(DataObjectSourceFactory dataObjectSourceFactory,
-			StringDataTypeConvertorManager stringDataTypeConvertorManager) {
-		return new DefaultDataNodeResolver(dataObjectSourceFactory, stringDataTypeConvertorManager);
-	}
-
-	@Bean
-	public DataFileResolver dataFileResolver(DataNodeResolver dataNodeResolver) {
-		return new DefaultDataFileResolver(dataNodeResolver);
-	}
-
-	// ==================================================数据文件生成器==================================================
-
-	@Bean
-	public DataFileGenerator dataFileGenerator(StringDataTypeConvertorManager stringDataTypeConvertorManager) {
-		return new DefaultDataFileGenerator(stringDataTypeConvertorManager);
 	}
 
 	// ==================================================模型数据对象转换器==================================================
@@ -95,6 +80,32 @@ public class DataFerryCoreConfiguration {
 	public DataFerry defaultDataFerry(DataFileResolver dataFileResolver,
 			DataObjectSourceOperator dataObjectSourceOperator) {
 		return new DefaultDataFerry(dataFileResolver, dataObjectSourceOperator);
+	}
+
+	// ==================================================数据文件配置==================================================
+
+	@Bean
+	public XMLDataFerryConfig xmlDataFerryConfig() {
+		return new XMLDataFerryConfig();
+	}
+
+	// ==================================================数据文件解析器==================================================
+	@Bean
+	public DataNodeResolver dataNodeResolver(DataObjectSourceFactory dataObjectSourceFactory,
+			StringDataTypeConvertorManager stringDataTypeConvertorManager) {
+		return new DefaultDataNodeResolver(dataObjectSourceFactory, stringDataTypeConvertorManager);
+	}
+
+	@Bean
+	public DataFileResolver dataFileResolver(DataNodeResolver dataNodeResolver) {
+		return new DefaultXMLDataFileResolver(dataNodeResolver);
+	}
+
+	// ==================================================数据文件生成器==================================================
+
+	@Bean
+	public DataFileGenerator dataFileGenerator(StringDataTypeConvertorManager stringDataTypeConvertorManager) {
+		return new DefaultXMLDataFileGenerator(stringDataTypeConvertorManager);
 	}
 
 }

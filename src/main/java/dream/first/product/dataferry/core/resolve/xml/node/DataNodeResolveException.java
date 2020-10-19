@@ -1,4 +1,4 @@
-package dream.first.product.dataferry.core.resolve.xml;
+package dream.first.product.dataferry.core.resolve.xml.node;
 
 import dream.first.product.dataferry.core.resolve.DataFileResolveException;
 

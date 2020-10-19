@@ -1,4 +1,4 @@
-package dream.first.product.dataferry.core.generate.impl;
+package dream.first.product.dataferry.core.generate.xml;
 
 import java.io.File;
 import java.util.List;
@@ -27,20 +27,19 @@ import dream.first.product.dataferry.core.generate.DataFileGenerateException;
 import dream.first.product.dataferry.core.generate.DataFileGenerator;
 
 /**
- * 默认的数据文件生成器
+ * XML数据文件生成器
  */
-public class DefaultDataFileGenerator implements DataFileGenerator {
+public class DefaultXMLDataFileGenerator implements DataFileGenerator {
 
 	private StringDataTypeConvertorManager stringDataTypeConvertorManager;
 
-	public DefaultDataFileGenerator(StringDataTypeConvertorManager stringDataTypeConvertorManager) {
+	public DefaultXMLDataFileGenerator(StringDataTypeConvertorManager stringDataTypeConvertorManager) {
 		this.stringDataTypeConvertorManager = stringDataTypeConvertorManager;
 	}
 
 	@Override
 	public void generate(List<? extends DataObjectSource> dataObjectSources, File dateFile)
 			throws DataFileGenerateException {
-
 		// 创建DocumentBuilderFactory对象
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		// 创建DocumentBuilder对象

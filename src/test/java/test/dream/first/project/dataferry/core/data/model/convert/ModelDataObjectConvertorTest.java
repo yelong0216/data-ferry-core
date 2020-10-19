@@ -19,7 +19,7 @@ import dream.first.product.dataferry.core.data.model.convert.ModelDataObjectConv
 import dream.first.product.dataferry.core.data.model.convert.impl.DefaultModelDataObjectConvertor;
 import dream.first.product.dataferry.core.generate.DataFileGenerateException;
 import dream.first.product.dataferry.core.generate.DataFileGenerator;
-import dream.first.product.dataferry.core.generate.impl.DefaultDataFileGenerator;
+import dream.first.product.dataferry.core.generate.xml.DefaultXMLDataFileGenerator;
 
 public class ModelDataObjectConvertorTest {
 
@@ -29,7 +29,7 @@ public class ModelDataObjectConvertorTest {
 		stringDataTypeConvertorManager.registerDataTypeConvertor(Date.class, new StringDateDataTypeConvertor());
 	}
 	
-	static DataFileGenerator dataFileGenerator = new DefaultDataFileGenerator(stringDataTypeConvertorManager);
+	static DataFileGenerator dataFileGenerator = new DefaultXMLDataFileGenerator(stringDataTypeConvertorManager);
 
 	static ModelDataObjectConvertor modelDataObjectConvertor;
 

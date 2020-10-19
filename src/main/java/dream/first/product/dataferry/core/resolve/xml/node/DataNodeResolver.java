@@ -1,7 +1,7 @@
 /**
  * 
  */
-package dream.first.product.dataferry.core.resolve.xml;
+package dream.first.product.dataferry.core.resolve.xml.node;
 
 import org.w3c.dom.Node;
 import org.yelong.core.annotation.Nullable;
