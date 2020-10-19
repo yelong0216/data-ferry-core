@@ -35,17 +35,16 @@ public class DefaultDataObjectOrdinaryAttribute extends AbstractDataObjectOrdina
 
 	@Override
 	public Class<?> getValueType() {
-		if (null == valueType) {
-			if (null != value) {
-				return value.getClass();
-			} else {
-				return null;
-			}
-		} else {
+		if (null != valueType) {
 			return valueType;
 		}
+		if (null != value) {
+			return value.getClass();
+		} else {
+			return null;
+		}
 	}
-	
+
 	@Override
 	public void setValueType(Class<?> valueType) {
 		this.valueType = valueType;

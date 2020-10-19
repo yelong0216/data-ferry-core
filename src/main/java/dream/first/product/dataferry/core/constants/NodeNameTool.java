@@ -37,5 +37,10 @@ public interface NodeNameTool {
 	 * 属性：属性值引用
 	 */
 	String ATTR_REF = "ref";
-	
+
+	/**
+	 * 属性：属性类型
+	 */
+	String ATTR_ATTRTYPE = "attrType";
+
 }

@@ -1,10 +1,12 @@
 package dream.first.product.dataferry.core.configuration;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 import org.springframework.context.annotation.Bean;
 import org.yelong.core.data.string.StringDataTypeConvertorManager;
 import org.yelong.core.data.string.StringDateDataTypeConvertor;
+import org.yelong.core.data.string.StringTimestampDataTypeConvertor;
 import org.yelong.core.model.manage.ModelManager;
 import org.yelong.core.model.property.ModelProperty;
 
@@ -34,6 +36,8 @@ public class DataFerryCoreConfiguration {
 	public StringDataTypeConvertorManager stringDataTypeConvertorManager() {
 		StringDataTypeConvertorManager stringDataTypeConvertorManager = new StringDataTypeConvertorManager();
 		stringDataTypeConvertorManager.registerDataTypeConvertor(Date.class, new StringDateDataTypeConvertor());
+		stringDataTypeConvertorManager.registerDataTypeConvertor(Timestamp.class,
+				new StringTimestampDataTypeConvertor());
 		return stringDataTypeConvertorManager;
 	}
 

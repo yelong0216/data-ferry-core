@@ -67,8 +67,14 @@ public class DefaultModelDataObjectConvertor implements ModelDataObjectConvertor
 		List<FieldAndColumn> normalFieldAndColumns = modelAndTable.getNormalFieldAndColumns();
 		for (FieldAndColumn fieldAndColumn : normalFieldAndColumns) {
 			Object value = modelProperty.get(model, fieldAndColumn.getFieldName());
+			Class<?> valueType = null;
+			if (null == value) {
+				valueType = fieldAndColumn.getFieldType();
+			} else {
+				valueType = value.getClass();
+			}
 			DataObjectOrdinaryAttribute dataObjectOrdinaryAttribute = modelDataObject
-					.addOrdinaryAttribute(fieldAndColumn.getColumn(), value, fieldAndColumn.getFieldType());
+					.addOrdinaryAttribute(fieldAndColumn.getColumn(), value, valueType);
 			// 获取是否指定的数据引用
 			Field field = fieldAndColumn.getField();
 			if (null != field) {

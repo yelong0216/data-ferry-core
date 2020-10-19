@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.yelong.commons.lang.EnumUtilsE;
 import org.yelong.core.annotation.Nullable;
 import org.yelong.core.data.DataTypeConvertException;
 import org.yelong.core.data.DataTypeConvertor;
@@ -15,6 +16,7 @@ import dream.first.product.dataferry.core.data.DataObject;
 import dream.first.product.dataferry.core.data.DataObjectOrdinaryAttribute;
 import dream.first.product.dataferry.core.data.DataObjectSource;
 import dream.first.product.dataferry.core.data.DataObjectSourceFactory;
+import dream.first.product.dataferry.core.data.attribute.DataObjectAttributeType;
 
 /**
  * 默认的数据节点解析器
@@ -90,58 +92,91 @@ public class DefaultDataNodeResolver implements DataNodeResolver {
 				continue;
 			}
 			Element nodeElement = (Element) node;
-			// 包含元素子节点则为对象元素。否则为属性元素
-			if (childNodeContainElementNode(node)) {
+			DataObjectAttributeType dataObjectAttributeType = getDataObjectAttributeType(nodeElement);
+			switch (dataObjectAttributeType) {
+			case ORDINARY:// 普通属性
+				addOrdinaryAttribute(dataObject, nodeElement);
+				break;
+			case DATA_OBJECT_SOURCE:// 数据对象源
 				DataObjectSource childDataObjectSource = resolve(node);
 				if (null != childDataObjectSource) {
 					dataObject.addDataObjectSourceAttribute(childDataObjectSource);
 				}
-			} else {
-				DataObjectOrdinaryAttribute attribute = dataObject.addOrdinaryAttribute(node.getNodeName());
-				// 获取引用值
-				String reference = nodeElement.getAttribute(NodeNameTool.ATTR_REF);
-				attribute.setReference(reference);
-
-				// 解析数值值
-				String textContent = nodeElement.getTextContent();
-				String javaTypeStr = nodeElement.getAttribute(NodeNameTool.ATTR_JAVATYPE);
-				Class<?> javaType = null;
-				if (StringUtils.isBlank(javaTypeStr)) {
-					javaType = String.class;
-				} else {
-					try {
-						javaType = ClassUtils.getClass(javaTypeStr);
-					} catch (ClassNotFoundException e) {
-						throw new DataNodeResolveException(
-								"属性元素“" + node.getNodeName() + "”指定的JavaType(" + javaTypeStr + ")不符合规范", e);
-					}
-				}
-				// 如果属性值为空字符且属性类型不是String则修改值为null
-				if (StringUtils.isEmpty(textContent)) {
-					if (javaType != String.class) {
-						textContent = null;
-					}
-				}
-
-				Object value;
-				DataTypeConvertor<String, ?> dataTypeConvertor = stringDataTypeConvertorManager
-						.getDataTypeConvertor(javaType);
-				if (null == dataTypeConvertor) {
-					value = textContent;
-				} else {
-					try {
-						value = dataTypeConvertor.convert(textContent);
-					} catch (DataTypeConvertException e) {
-						throw new DataNodeResolveException(
-								"属性元素“" + node.getNodeName() + "”值(" + textContent + ")转换为JavaType(" + javaType + ")异常",
-								e);
-					}
-				}
-				attribute.setValue(value);
-				attribute.setValueType(javaType);
+				break;
 			}
 		}
 		return dataObject;
+	}
+
+	/**
+	 * 数据对象根据元素添加一个普通属性
+	 * 
+	 * @param dataObject               数据对象
+	 * @param ordinaryAttributeElement 普通属性元素
+	 * @throws DataNodeResolveException
+	 */
+	protected void addOrdinaryAttribute(DataObject dataObject, Element attributeElement)
+			throws DataNodeResolveException {
+		String attrName = attributeElement.getNodeName();
+		DataObjectOrdinaryAttribute attribute = dataObject.addOrdinaryAttribute(attrName);
+		// 获取引用值
+		String reference = attributeElement.getAttribute(NodeNameTool.ATTR_REF);
+		attribute.setReference(reference);
+
+		// 解析数值值
+		String textContent = attributeElement.getTextContent();
+		String javaTypeStr = attributeElement.getAttribute(NodeNameTool.ATTR_JAVATYPE);
+		Class<?> javaType = null;
+		if (StringUtils.isBlank(javaTypeStr)) {
+			javaType = String.class;
+		} else {
+			try {
+				javaType = ClassUtils.getClass(javaTypeStr);
+			} catch (ClassNotFoundException e) {
+				throw new DataNodeResolveException("属性元素“" + attrName + "”指定的JavaType(" + javaTypeStr + ")不符合规范", e);
+			}
+		}
+		// 如果属性值为空字符且属性类型不是String则修改值为null
+		if (StringUtils.isEmpty(textContent)) {
+			if (javaType != String.class) {
+				textContent = null;
+			}
+		}
+
+		Object value;
+		DataTypeConvertor<String, ?> dataTypeConvertor = stringDataTypeConvertorManager.getDataTypeConvertor(javaType);
+		if (null == dataTypeConvertor) {
+			value = textContent;
+		} else {
+			try {
+				value = dataTypeConvertor.convert(textContent);
+			} catch (DataTypeConvertException e) {
+				throw new DataNodeResolveException(
+						"属性元素“" + attrName + "”值(" + textContent + ")转换为JavaType(" + javaType + ")异常", e);
+			}
+		}
+		attribute.setValue(value);
+		attribute.setValueType(javaType);
+	}
+
+	/**
+	 * 获取属性的类型
+	 * 
+	 * @param attrElement 属性元素
+	 * @return 属性类型
+	 */
+	protected DataObjectAttributeType getDataObjectAttributeType(Element attrElement) throws DataNodeResolveException {
+		String attribute = attrElement.getAttribute(NodeNameTool.ATTR_ATTRTYPE);
+		if (StringUtils.isBlank(attribute)) {
+			return DataObjectAttributeType.ORDINARY;
+		}
+		DataObjectAttributeType dataObjectAttributeType = EnumUtilsE.valueOf(DataObjectAttributeType.class,
+				attribute.toUpperCase());
+		if (null == dataObjectAttributeType) {
+			throw new DataNodeResolveException("属性元素“" + attrElement.getNodeName() + "”类型(" + attribute + ")不符合规范。规范值："
+					+ DataObjectAttributeType.values());
+		}
+		return dataObjectAttributeType;
 	}
 
 	/**

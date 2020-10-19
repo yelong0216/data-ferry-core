@@ -22,6 +22,7 @@ import dream.first.product.dataferry.core.constants.NodeNameTool;
 import dream.first.product.dataferry.core.data.DataObject;
 import dream.first.product.dataferry.core.data.DataObjectOrdinaryAttribute;
 import dream.first.product.dataferry.core.data.DataObjectSource;
+import dream.first.product.dataferry.core.data.attribute.DataObjectAttributeType;
 import dream.first.product.dataferry.core.generate.DataFileGenerateException;
 import dream.first.product.dataferry.core.generate.DataFileGenerator;
 
@@ -82,7 +83,7 @@ public class DefaultDataFileGenerator implements DataFileGenerator {
 		tableElement.setAttribute(NodeNameTool.ATTR_DATAOPERATIONTYPE,
 				dataObjectSource.getDataObjectOperationType().name());
 		tableElement.setAttribute(NodeNameTool.ATTR_PRIMARYKEY, dataObjectSource.getPrimaryKey());
-
+		tableElement.setAttribute(NodeNameTool.ATTR_ATTRTYPE, DataObjectAttributeType.DATA_OBJECT_SOURCE.name());
 		List<? extends DataObject> dataObjects = dataObjectSource.getDataObjects();
 		if (!dataObjects.isEmpty()) {
 			for (DataObject dataObject : dataObjects) {
@@ -116,6 +117,9 @@ public class DefaultDataFileGenerator implements DataFileGenerator {
 			throws DataFileGenerateException {
 		String attrName = dataObjectOrdinaryAttribute.getName();
 		Element attrElement = document.createElement(attrName);
+
+		// 元素类型。默认就是普通属性，不用展示在标签中了
+//		attrElement.setAttribute(NodeNameTool.ATTR_ATTRTYPE, DataObjectAttributeType.ORDINARY.name());
 
 		// 设置数据引用。如果存在数据引用则不用设置属性值
 		String reference = dataObjectOrdinaryAttribute.getReference();

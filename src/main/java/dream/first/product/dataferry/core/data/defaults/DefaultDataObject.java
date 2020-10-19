@@ -1,5 +1,8 @@
 package dream.first.product.dataferry.core.data.defaults;
 
+import org.yelong.commons.util.map.CaseInsensitiveMapUtils;
+import org.yelong.commons.util.map.CaseInsensitiveMapUtils.KeyStoreMode;
+
 import dream.first.product.dataferry.core.data.DataObjectSource;
 
 /**
@@ -11,6 +14,8 @@ public class DefaultDataObject extends AbstractDataObject {
 
 	protected DefaultDataObject(DataObjectSource dataObjectSource) {
 		this.dataObjectSource = dataObjectSource;
+		// 属性键值默认忽略大小写
+		super.ordinaryAttributes = CaseInsensitiveMapUtils.createCaseInsensitiveMap(KeyStoreMode.LOWER);
 	}
 
 	@Override

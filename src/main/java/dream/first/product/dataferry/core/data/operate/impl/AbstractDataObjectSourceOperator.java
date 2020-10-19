@@ -151,6 +151,9 @@ public abstract class AbstractDataObjectSourceOperator implements DataObjectSour
 		AttributeSqlFragment attributeSqlFragment = setAttribute(modelSqlFragmentFactory.createAttributeSqlFragment(),
 				dataObjectGroup, dataObject);
 
+		// 移除ID
+		attributeSqlFragment.removeAttr(primaryKey);
+
 		UpdateSqlFragment updateSqlFragment = modelSqlFragmentFactory.createUpdateSqlFragment(tableName,
 				attributeSqlFragment);
 		updateSqlFragment.setConditionSqlFragment(singleConditionSqlFragment);
