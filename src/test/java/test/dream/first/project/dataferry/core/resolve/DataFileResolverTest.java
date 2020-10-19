@@ -10,8 +10,8 @@ import org.yelong.core.data.string.StringDateDataTypeConvertor;
 import dream.first.product.dataferry.core.data.DataObjectSource;
 import dream.first.product.dataferry.core.data.model.impl.DefaultModelDataObjectSourceFactory;
 import dream.first.product.dataferry.core.resolve.DataFileResolver;
-import dream.first.product.dataferry.core.resolve.impl.DefaultDataFileResolver;
-import dream.first.product.dataferry.core.resolve.impl.DefaultDataNodeResolver;
+import dream.first.product.dataferry.core.resolve.xml.DefaultDataFileResolver;
+import dream.first.product.dataferry.core.resolve.xml.DefaultDataNodeResolver;
 
 public class DataFileResolverTest {
 

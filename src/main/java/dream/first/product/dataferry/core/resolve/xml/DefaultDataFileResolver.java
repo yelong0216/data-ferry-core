@@ -1,4 +1,4 @@
-package dream.first.product.dataferry.core.resolve.impl;
+package dream.first.product.dataferry.core.resolve.xml;
 
 import org.w3c.dom.Node;
 

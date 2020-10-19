@@ -13,8 +13,8 @@ import dream.first.product.dataferry.core.data.model.impl.DefaultModelDataObject
 import dream.first.product.dataferry.core.generate.DataFileGenerator;
 import dream.first.product.dataferry.core.generate.impl.DefaultDataFileGenerator;
 import dream.first.product.dataferry.core.resolve.DataFileResolver;
-import dream.first.product.dataferry.core.resolve.impl.DefaultDataFileResolver;
-import dream.first.product.dataferry.core.resolve.impl.DefaultDataNodeResolver;
+import dream.first.product.dataferry.core.resolve.xml.DefaultDataFileResolver;
+import dream.first.product.dataferry.core.resolve.xml.DefaultDataNodeResolver;
 
 public class DataFileGeneratorTest {
 

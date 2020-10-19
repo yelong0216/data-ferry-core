@@ -1,9 +1,10 @@
 /**
  * 
  */
-package dream.first.product.dataferry.core.resolve.impl;
+package dream.first.product.dataferry.core.resolve.xml;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.yelong.core.annotation.Nullable;
 
 import dream.first.product.dataferry.core.constants.NodeNameTool;
@@ -32,13 +34,13 @@ public abstract class AbstractDataFileResolver implements DataFileResolver {
 	public static final String ROOT_ELEMENT_NAME = NodeNameTool.ROOT_ELEMENT_NAME;
 
 	@Override
-	public List<DataObjectSource> resolve(File dataXML) throws DataFileResolveException {
-		Document document = parseDocument(dataXML);
+	public List<DataObjectSource> resolve(InputStream dateInputStream) throws DataFileResolveException {
+		Document document = parseDocument(dateInputStream);
 		Element root = document.getDocumentElement();
-		
-		//验证根节点是否符合规范
+
+		// 验证根节点是否符合规范
 		isNormativeRootElement(root);
-		//所有的子节点对应一个数据对象源
+		// 所有的子节点对应一个数据对象源
 		NodeList rootElementChildNodes = root.getChildNodes();
 
 		int childNodesLength = rootElementChildNodes.getLength();
@@ -46,7 +48,7 @@ public abstract class AbstractDataFileResolver implements DataFileResolver {
 
 		for (int i = 0; i < childNodesLength; i++) {
 			Node node = rootElementChildNodes.item(i);
-			//解析节点为数据对象源
+			// 解析节点为数据对象源
 			DataObjectSource dataObjectSource = resolveToDataObjectSource(node);
 			if (null == dataObjectSource) {
 				continue;
@@ -85,11 +87,28 @@ public abstract class AbstractDataFileResolver implements DataFileResolver {
 	 * @return XML文档对象
 	 * @throws DataFileResolveException 数据文件解析异常
 	 */
-	public Document parseDocument(File file) throws DataFileResolveException {
+	protected Document parseDocument(File file) throws DataFileResolveException {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			return db.parse(file);
+		} catch (Exception e) {
+			throw new DataFileResolveException(e);
+		}
+	}
+
+	/**
+	 * 解析XML文档
+	 * 
+	 * @param file XML文件
+	 * @return XML文档对象
+	 * @throws DataFileResolveException 数据文件解析异常
+	 */
+	protected Document parseDocument(InputStream is) throws DataFileResolveException {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		try {
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			return db.parse(new InputSource(is));
 		} catch (Exception e) {
 			throw new DataFileResolveException(e);
 		}

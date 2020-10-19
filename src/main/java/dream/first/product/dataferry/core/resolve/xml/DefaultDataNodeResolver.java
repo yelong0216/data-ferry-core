@@ -1,4 +1,4 @@
-package dream.first.product.dataferry.core.resolve.impl;
+package dream.first.product.dataferry.core.resolve.xml;
 
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -168,7 +168,12 @@ public class DefaultDataNodeResolver implements DataNodeResolver {
 	protected DataObjectAttributeType getDataObjectAttributeType(Element attrElement) throws DataNodeResolveException {
 		String attribute = attrElement.getAttribute(NodeNameTool.ATTR_ATTRTYPE);
 		if (StringUtils.isBlank(attribute)) {
-			return DataObjectAttributeType.ORDINARY;
+			// 包含子元素则为对象元素
+			if (childNodeContainElementNode(attrElement)) {
+				return DataObjectAttributeType.DATA_OBJECT_SOURCE;
+			} else {
+				return DataObjectAttributeType.ORDINARY;
+			}
 		}
 		DataObjectAttributeType dataObjectAttributeType = EnumUtilsE.valueOf(DataObjectAttributeType.class,
 				attribute.toUpperCase());
