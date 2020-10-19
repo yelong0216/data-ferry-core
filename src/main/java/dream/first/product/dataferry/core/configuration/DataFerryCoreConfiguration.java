@@ -28,6 +28,7 @@ import dream.first.product.dataferry.core.generate.DataFileGenerator;
 import dream.first.product.dataferry.core.generate.xml.DefaultXMLDataFileGenerator;
 import dream.first.product.dataferry.core.resolve.DataFileResolver;
 import dream.first.product.dataferry.core.resolve.xml.DefaultXMLDataFileResolver;
+import dream.first.product.dataferry.core.resolve.xml.XMLDataFileResolver;
 import dream.first.product.dataferry.core.resolve.xml.node.DataNodeResolver;
 import dream.first.product.dataferry.core.resolve.xml.node.DefaultDataNodeResolver;
 
@@ -97,7 +98,7 @@ public class DataFerryCoreConfiguration {
 	}
 
 	@Bean
-	public DataFileResolver dataFileResolver(DataNodeResolver dataNodeResolver) {
+	public XMLDataFileResolver dataFileResolver(DataNodeResolver dataNodeResolver) {
 		return new DefaultXMLDataFileResolver(dataNodeResolver);
 	}
 
