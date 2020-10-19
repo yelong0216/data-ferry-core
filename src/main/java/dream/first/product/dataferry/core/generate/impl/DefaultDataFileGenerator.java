@@ -11,6 +11,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.yelong.core.data.DataTypeConvertException;
@@ -36,7 +37,8 @@ public class DefaultDataFileGenerator implements DataFileGenerator {
 	}
 
 	@Override
-	public void generate(List<? extends DataObjectSource> dataObjectSources, File dateFile) throws DataFileGenerateException {
+	public void generate(List<? extends DataObjectSource> dataObjectSources, File dateFile)
+			throws DataFileGenerateException {
 
 		// 创建DocumentBuilderFactory对象
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -73,7 +75,6 @@ public class DefaultDataFileGenerator implements DataFileGenerator {
 	 * @param document         文档
 	 * @return XMl元素
 	 */
-	@SuppressWarnings("unchecked")
 	public Element dataObjectSourceToElement(DataObjectSource dataObjectSource, Document document)
 			throws DataFileGenerateException {
 		String tableName = dataObjectSource.getTableName();
@@ -89,36 +90,8 @@ public class DefaultDataFileGenerator implements DataFileGenerator {
 				tableElement.appendChild(rowElement);
 				List<DataObjectOrdinaryAttribute> ordinaryAttributes = dataObject.getOrdinaryAttributes();
 				for (DataObjectOrdinaryAttribute dataObjectOrdinaryAttribute : ordinaryAttributes) {
-					String attrName = dataObjectOrdinaryAttribute.getName();
-					Element attrElement = document.createElement(attrName);
+					Element attrElement = buildAttrElement(dataObjectOrdinaryAttribute, document);
 					rowElement.appendChild(attrElement);
-					Object value = dataObjectOrdinaryAttribute.getValue();
-					String reverseValue = null;
-					// 根据值类型转换数据格式
-					Class<?> valueType = dataObjectOrdinaryAttribute.getValueType();
-					if (null != valueType) {
-						attrElement.setAttribute(NodeNameTool.ATTR_JAVATYPE, valueType.getName());
-						DataTypeConvertor<String, Object> dataTypeConvertor = (DataTypeConvertor<String, Object>) stringDataTypeConvertorManager
-								.getDataTypeConvertor(valueType);
-						if (null != dataTypeConvertor) {
-							try {
-								reverseValue = dataTypeConvertor.reverseConvert(value);
-							} catch (DataTypeConvertException e) {
-								throw new DataFileGenerateException(
-										"属性元素“" + attrName + "”值(" + value + ")转换为(String)异常", e);
-							}
-						}
-					}
-					if (null == reverseValue) {
-						if (null == value) {
-							reverseValue = null;
-						} else {
-							reverseValue = value.toString();
-						}
-					}
-
-					attrElement.setTextContent(reverseValue);
-
 				}
 				List<? extends DataObjectSource> dataObjectSourceAttributes = dataObject
 						.getDataObjectSourceAttributes();
@@ -128,6 +101,55 @@ public class DefaultDataFileGenerator implements DataFileGenerator {
 			}
 		}
 		return tableElement;
+	}
+
+	/**
+	 * 构建一个属性元素
+	 * 
+	 * @param dataObjectOrdinaryAttribute 数据对象属性
+	 * @param document                    文档
+	 * @return 属性元素
+	 * @throws DataFileGenerateException 数据文件生成异常
+	 */
+	@SuppressWarnings("unchecked")
+	protected Element buildAttrElement(DataObjectOrdinaryAttribute dataObjectOrdinaryAttribute, Document document)
+			throws DataFileGenerateException {
+		String attrName = dataObjectOrdinaryAttribute.getName();
+		Element attrElement = document.createElement(attrName);
+
+		// 设置数据引用。如果存在数据引用则不用设置属性值
+		String reference = dataObjectOrdinaryAttribute.getReference();
+		if (StringUtils.isNotBlank(reference)) {
+			attrElement.setAttribute(NodeNameTool.ATTR_REF, reference);
+			return attrElement;
+		}
+		// 设置值。将值转换为字符串
+		Object value = dataObjectOrdinaryAttribute.getValue();
+		String reverseValue = null;
+		// 根据值类型转换数据格式
+		Class<?> valueType = dataObjectOrdinaryAttribute.getValueType();
+		if (null != valueType) {
+			attrElement.setAttribute(NodeNameTool.ATTR_JAVATYPE, valueType.getName());
+			DataTypeConvertor<String, Object> dataTypeConvertor = (DataTypeConvertor<String, Object>) stringDataTypeConvertorManager
+					.getDataTypeConvertor(valueType);
+			if (null != dataTypeConvertor) {
+				try {
+					reverseValue = dataTypeConvertor.reverseConvert(value);
+				} catch (DataTypeConvertException e) {
+					throw new DataFileGenerateException("属性元素“" + attrName + "”值(" + value + ")转换为(String)异常", e);
+				}
+			}
+		}
+		if (null == reverseValue) {
+			if (null == value) {
+				reverseValue = null;
+			} else {
+				reverseValue = value.toString();
+			}
+		}
+
+		attrElement.setTextContent(reverseValue);
+		return attrElement;
 	}
 
 }

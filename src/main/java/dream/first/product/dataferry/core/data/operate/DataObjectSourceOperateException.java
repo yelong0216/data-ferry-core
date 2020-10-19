@@ -3,7 +3,7 @@ package dream.first.product.dataferry.core.data.operate;
 /**
  * 数据对象源操作异常
  */
-public class DataObjectSourceOperateException extends Exception {
+public class DataObjectSourceOperateException extends RuntimeException {
 
 	private static final long serialVersionUID = -899933751925894524L;
 

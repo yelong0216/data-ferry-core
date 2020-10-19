@@ -31,9 +31,12 @@ public class DefaultDataFerry implements DataFerry {
 	public DataFerryResult ferry(File dataFile, SqlModelService modelService)
 			throws DataFileResolveException, DataObjectSourceOperateException {
 		List<DataObjectSource> dataObjectSources = dataFileResolver.resolve(dataFile);
-		for (DataObjectSource dataObjectSource : dataObjectSources) {
-			dataObjectSourceOperator.operate(dataObjectSource, modelService);
-		}
+		//一个文件具有事务功能
+		modelService.doOperation(() -> {
+			for (DataObjectSource dataObjectSource : dataObjectSources) {
+				dataObjectSourceOperator.operate(dataObjectSource, modelService);
+			}
+		});
 		return new DataFerryResult(dataObjectSources);
 	}
 

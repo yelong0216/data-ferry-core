@@ -1,5 +1,8 @@
 package dream.first.product.dataferry.core.data.attribute;
 
+/**
+ * 属性引用异常
+ */
 public class OrdinaryAttributeReferenceException extends RuntimeException {
 
 	private static final long serialVersionUID = -5396676684928045642L;

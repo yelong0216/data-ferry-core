@@ -37,7 +37,8 @@ public class DefaultDataObjectOrdinaryAttributeManager implements DataObjectOrdi
 
 		DataObject dataObject = dataObjectGroup.getDataObject(tableName);
 		if (null == dataObject) {
-			return null;
+			throw new OrdinaryAttributeReferenceException("设置属性“" + dataObjectOrdinaryAttribute.getName() + "”错误！解析引用“"
+					+ reference + "”异常，没有找到“" + tableName + "”引用");
 		}
 		DataObjectOrdinaryAttribute ordinaryAttribute = dataObject.getOrdinaryAttribute(attrName);
 		return getAttributeValue(dataObjectGroup, ordinaryAttribute);

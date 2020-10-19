@@ -1,5 +1,6 @@
 package dream.first.product.dataferry.core.data.model.convert.impl;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,9 +12,11 @@ import org.yelong.core.model.manage.ModelManager;
 import org.yelong.core.model.manage.exception.PrimaryKeyException;
 import org.yelong.core.model.property.ModelProperty;
 
+import dream.first.product.dataferry.core.data.DataObjectOrdinaryAttribute;
 import dream.first.product.dataferry.core.data.model.ModelDataObject;
 import dream.first.product.dataferry.core.data.model.ModelDataObjectSource;
 import dream.first.product.dataferry.core.data.model.ModelDataObjectSourceFactory;
+import dream.first.product.dataferry.core.data.model.convert.ModelDataObjectAttributeRef;
 import dream.first.product.dataferry.core.data.model.convert.ModelDataObjectConvertException;
 import dream.first.product.dataferry.core.data.model.convert.ModelDataObjectConvertor;
 import dream.first.product.dataferry.core.data.model.convert.ModelDataObjectOperationType;
@@ -64,7 +67,18 @@ public class DefaultModelDataObjectConvertor implements ModelDataObjectConvertor
 		List<FieldAndColumn> normalFieldAndColumns = modelAndTable.getNormalFieldAndColumns();
 		for (FieldAndColumn fieldAndColumn : normalFieldAndColumns) {
 			Object value = modelProperty.get(model, fieldAndColumn.getFieldName());
-			modelDataObject.addOrdinaryAttribute(fieldAndColumn.getColumn(), value, fieldAndColumn.getFieldType());
+			DataObjectOrdinaryAttribute dataObjectOrdinaryAttribute = modelDataObject
+					.addOrdinaryAttribute(fieldAndColumn.getColumn(), value, fieldAndColumn.getFieldType());
+			// 获取是否指定的数据引用
+			Field field = fieldAndColumn.getField();
+			if (null != field) {
+				ModelDataObjectAttributeRef modelDataObjectAttributeRef = AnnotationUtilsE.getAnnotation(field,
+						ModelDataObjectAttributeRef.class);
+				if (null != modelDataObjectAttributeRef) {
+					dataObjectOrdinaryAttribute.setReference(modelDataObjectAttributeRef.value());
+				}
+			}
+
 		}
 		return modelDataObject;
 	}

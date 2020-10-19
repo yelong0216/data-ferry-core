@@ -5,6 +5,9 @@ import java.util.Map;
 
 import dream.first.product.dataferry.core.data.DataObject;
 
+/**
+ * 数据对象组
+ */
 public class DataObjectGroup {
 
 	private Map<String, DataObject> dataObjectMaps = new LinkedHashMap<>();
