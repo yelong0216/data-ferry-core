@@ -1,7 +1,7 @@
 /**
  * 
  */
-package dream.first.product.dataferry.core.data.model.convert;
+package dream.first.product.dataferry.core.data.model;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

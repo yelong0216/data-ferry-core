@@ -34,4 +34,24 @@ public interface DataFileGenerator {
 	 */
 	void generate(List<? extends DataObjectSource> dataObjectSources, File dateFile) throws DataFileGenerateException;
 
+	/**
+	 * 根据数据源集合生成数据文件内容
+	 * 
+	 * @param dataObjectSource 数据对象源
+	 * @return 数据文件 byte 数组
+	 * @throws DataFileGenerateException 数据对象源集合
+	 */
+	default byte[] generateBytes(DataObjectSource dataObjectSource) throws DataFileGenerateException {
+		return generateBytes(Arrays.asList(dataObjectSource));
+	}
+
+	/**
+	 * 根据数据源集合生成数据文件内容
+	 * 
+	 * @param dataObjectSources 数据对象源集合
+	 * @return 数据文件 byte 数组
+	 * @throws DataFileGenerateException 数据对象源集合
+	 */
+	byte[] generateBytes(List<? extends DataObjectSource> dataObjectSources) throws DataFileGenerateException;
+
 }

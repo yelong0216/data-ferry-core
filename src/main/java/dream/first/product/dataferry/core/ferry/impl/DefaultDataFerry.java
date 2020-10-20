@@ -1,6 +1,6 @@
 package dream.first.product.dataferry.core.ferry.impl;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import org.yelong.core.model.service.SqlModelService;
@@ -28,10 +28,10 @@ public class DefaultDataFerry implements DataFerry {
 	}
 
 	@Override
-	public DataFerryResult ferry(File dataFile, SqlModelService modelService)
+	public DataFerryResult ferry(InputStream inputStream, SqlModelService modelService)
 			throws DataFileResolveException, DataObjectSourceOperateException {
-		List<DataObjectSource> dataObjectSources = dataFileResolver.resolve(dataFile);
-		//一个文件具有事务功能
+		List<DataObjectSource> dataObjectSources = dataFileResolver.resolve(inputStream);
+		// 一个文件具有事务功能
 		modelService.doOperation(() -> {
 			for (DataObjectSource dataObjectSource : dataObjectSources) {
 				dataObjectSourceOperator.operate(dataObjectSource, modelService);

@@ -1,5 +1,6 @@
 package dream.first.product.dataferry.core.generate.xml;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.List;
 
@@ -40,6 +41,41 @@ public class DefaultXMLDataFileGenerator implements DataFileGenerator {
 	@Override
 	public void generate(List<? extends DataObjectSource> dataObjectSources, File dateFile)
 			throws DataFileGenerateException {
+		Document document = genereateDocument(dataObjectSources);
+		// 接下来将Element对象转换成xml文档
+		TransformerFactory tff = TransformerFactory.newInstance();
+		try {
+			Transformer tf = tff.newTransformer();
+			tf.transform(new DOMSource(document), new StreamResult(dateFile));
+		} catch (Exception e) {
+			throw new DataFileGenerateException(e);
+		}
+	}
+
+	@Override
+	public byte[] generateBytes(List<? extends DataObjectSource> dataObjectSources) throws DataFileGenerateException {
+		Document document = genereateDocument(dataObjectSources);
+		// 接下来将Element对象转换成xml文档
+		TransformerFactory tff = TransformerFactory.newInstance();
+		try {
+			Transformer tf = tff.newTransformer();
+			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			tf.transform(new DOMSource(document), new StreamResult(byteArrayOutputStream));
+			return byteArrayOutputStream.toByteArray();
+		} catch (Exception e) {
+			throw new DataFileGenerateException(e);
+		}
+	}
+
+	/**
+	 * 生成文档
+	 * 
+	 * @param dataObjectSources 数据对象源
+	 * @return 文档
+	 * @throws DataFileGenerateException 数据文件生成异常
+	 */
+	protected Document genereateDocument(List<? extends DataObjectSource> dataObjectSources)
+			throws DataFileGenerateException {
 		// 创建DocumentBuilderFactory对象
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		// 创建DocumentBuilder对象
@@ -57,15 +93,7 @@ public class DefaultXMLDataFileGenerator implements DataFileGenerator {
 		for (DataObjectSource dataObjectSource : dataObjectSources) {
 			data.appendChild(dataObjectSourceToElement(dataObjectSource, document));
 		}
-
-		// 接下来将Element对象转换成xml文档
-		TransformerFactory tff = TransformerFactory.newInstance();
-		try {
-			Transformer tf = tff.newTransformer();
-			tf.transform(new DOMSource(data), new StreamResult(dateFile));
-		} catch (Exception e) {
-			throw new DataFileGenerateException(e);
-		}
+		return document;
 	}
 
 	/**

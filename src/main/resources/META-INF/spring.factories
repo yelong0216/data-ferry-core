@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-dream.first.product.dataferry.core.configuration.DataFerryCoreConfiguration
+dream.first.product.dataferry.core.configuration.DataFerryCoreConfiguration,\
+dream.first.product.dataferry.core.configuration.xml.XMLDataFerryConfig

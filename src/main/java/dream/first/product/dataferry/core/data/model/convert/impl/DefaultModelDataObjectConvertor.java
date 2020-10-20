@@ -9,22 +9,21 @@ import org.yelong.core.model.Modelable;
 import org.yelong.core.model.manage.FieldAndColumn;
 import org.yelong.core.model.manage.ModelAndTable;
 import org.yelong.core.model.manage.ModelManager;
-import org.yelong.core.model.manage.exception.PrimaryKeyException;
 import org.yelong.core.model.property.ModelProperty;
 
 import dream.first.product.dataferry.core.data.DataObjectOrdinaryAttribute;
+import dream.first.product.dataferry.core.data.convert.impl.DefaultDataObjectConvertor;
 import dream.first.product.dataferry.core.data.model.ModelDataObject;
+import dream.first.product.dataferry.core.data.model.ModelDataObjectAttributeRef;
 import dream.first.product.dataferry.core.data.model.ModelDataObjectSource;
 import dream.first.product.dataferry.core.data.model.ModelDataObjectSourceFactory;
-import dream.first.product.dataferry.core.data.model.convert.ModelDataObjectAttributeRef;
 import dream.first.product.dataferry.core.data.model.convert.ModelDataObjectConvertException;
 import dream.first.product.dataferry.core.data.model.convert.ModelDataObjectConvertor;
-import dream.first.product.dataferry.core.data.model.convert.ModelDataObjectOperationType;
 
 /**
  * 模型数据对象转换器
  */
-public class DefaultModelDataObjectConvertor implements ModelDataObjectConvertor {
+public class DefaultModelDataObjectConvertor extends DefaultDataObjectConvertor implements ModelDataObjectConvertor {
 
 	private ModelManager modelManager;
 
@@ -42,21 +41,7 @@ public class DefaultModelDataObjectConvertor implements ModelDataObjectConvertor
 	@Override
 	public <M extends Modelable> ModelDataObjectSource<M> toDataObjectSource(Class<M> modelClass)
 			throws ModelDataObjectConvertException {
-		ModelAndTable modelAndTable = modelManager.getModelAndTable(modelClass);
-		ModelDataObjectSource<M> modelDataObjectSource = modelDataObjectSourceFactory.create(modelClass);
-		try {
-			FieldAndColumn primaryKey = modelAndTable.getOnlyPrimaryKey();
-			modelDataObjectSource.setPrimaryKey(primaryKey.getColumn());
-		} catch (PrimaryKeyException e) {
-			// ignore
-		}
-		modelDataObjectSource.setTableName(modelAndTable.getTableName());
-		ModelDataObjectOperationType modelDataObjectOperationType = AnnotationUtilsE.getAnnotation(modelClass,
-				ModelDataObjectOperationType.class, true);
-		if (null != modelDataObjectOperationType) {
-			modelDataObjectSource.setDataObjectOperationType(modelDataObjectOperationType.value());
-		}
-		return modelDataObjectSource;
+		return modelDataObjectSourceFactory.create(modelClass);
 	}
 
 	@Override

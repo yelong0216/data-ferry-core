@@ -1,7 +1,7 @@
 /**
  * 
  */
-package dream.first.product.dataferry.core.data.model.convert;
+package dream.first.product.dataferry.core.data.model;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;

@@ -3,6 +3,7 @@ package dream.first.product.dataferry.core.configuration;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.yelong.core.data.string.StringDataTypeConvertorManager;
 import org.yelong.core.data.string.StringDateDataTypeConvertor;
@@ -12,8 +13,6 @@ import org.yelong.core.data.string.StringTimestampDataTypeConvertor;
 import org.yelong.core.model.manage.ModelManager;
 import org.yelong.core.model.property.ModelProperty;
 
-import dream.first.product.dataferry.core.configuration.xml.XMLDataFerryConfig;
-import dream.first.product.dataferry.core.data.DataObjectSourceFactory;
 import dream.first.product.dataferry.core.data.attribute.DataObjectOrdinaryAttributeManager;
 import dream.first.product.dataferry.core.data.attribute.impl.DefaultDataObjectOrdinaryAttributeManager;
 import dream.first.product.dataferry.core.data.model.ModelDataObjectSourceFactory;
@@ -24,19 +23,14 @@ import dream.first.product.dataferry.core.data.operate.DataObjectSourceOperator;
 import dream.first.product.dataferry.core.data.operate.impl.DefaultDataObjectSourceOperator;
 import dream.first.product.dataferry.core.ferry.DataFerry;
 import dream.first.product.dataferry.core.ferry.impl.DefaultDataFerry;
-import dream.first.product.dataferry.core.generate.DataFileGenerator;
-import dream.first.product.dataferry.core.generate.xml.DefaultXMLDataFileGenerator;
 import dream.first.product.dataferry.core.resolve.DataFileResolver;
-import dream.first.product.dataferry.core.resolve.xml.DefaultXMLDataFileResolver;
-import dream.first.product.dataferry.core.resolve.xml.XMLDataFileResolver;
-import dream.first.product.dataferry.core.resolve.xml.node.DataNodeResolver;
-import dream.first.product.dataferry.core.resolve.xml.node.DefaultDataNodeResolver;
 
 public class DataFerryCoreConfiguration {
 
 	// ==================================================字符串的数据类型转换器管理器==================================================
 
 	@Bean
+	@ConditionalOnMissingBean
 	public StringDataTypeConvertorManager stringDataTypeConvertorManager() {
 		StringDataTypeConvertorManager stringDataTypeConvertorManager = new StringDataTypeConvertorManager();
 		stringDataTypeConvertorManager.registerDataTypeConvertor(Date.class, new StringDateDataTypeConvertor());
@@ -50,13 +44,15 @@ public class DataFerryCoreConfiguration {
 	// ==================================================数据对象源工厂==================================================
 
 	@Bean
-	public ModelDataObjectSourceFactory modelDataObjectSourceFactory() {
-		return new DefaultModelDataObjectSourceFactory();
+	@ConditionalOnMissingBean
+	public ModelDataObjectSourceFactory modelDataObjectSourceFactory(ModelManager modelManager) {
+		return new DefaultModelDataObjectSourceFactory(modelManager);
 	}
 
 	// ==================================================模型数据对象转换器==================================================
 
 	@Bean
+	@ConditionalOnMissingBean
 	public ModelDataObjectConvertor modelDataObjectConvertor(ModelManager modelManager, ModelProperty modelProperty,
 			ModelDataObjectSourceFactory modelDataObjectSourceFactory) {
 		return new DefaultModelDataObjectConvertor(modelManager, modelProperty, modelDataObjectSourceFactory);
@@ -65,11 +61,13 @@ public class DataFerryCoreConfiguration {
 	// ==================================================数据对象源操作器==================================================
 
 	@Bean
+	@ConditionalOnMissingBean
 	public DataObjectOrdinaryAttributeManager dataObjectOrdinaryAttributeManager() {
 		return new DefaultDataObjectOrdinaryAttributeManager();
 	}
 
 	@Bean
+	@ConditionalOnMissingBean
 	public DataObjectSourceOperator dataObjectSourceOperator(
 			DataObjectOrdinaryAttributeManager dataObjectOrdinaryAttributeManager) {
 		return new DefaultDataObjectSourceOperator(dataObjectOrdinaryAttributeManager);
@@ -78,35 +76,9 @@ public class DataFerryCoreConfiguration {
 	// ==================================================数据摆渡==================================================
 
 	@Bean
-	public DataFerry defaultDataFerry(DataFileResolver dataFileResolver,
-			DataObjectSourceOperator dataObjectSourceOperator) {
+	@ConditionalOnMissingBean
+	public DataFerry dataFerry(DataFileResolver dataFileResolver, DataObjectSourceOperator dataObjectSourceOperator) {
 		return new DefaultDataFerry(dataFileResolver, dataObjectSourceOperator);
-	}
-
-	// ==================================================数据文件配置==================================================
-
-	@Bean
-	public XMLDataFerryConfig xmlDataFerryConfig() {
-		return new XMLDataFerryConfig();
-	}
-
-	// ==================================================数据文件解析器==================================================
-	@Bean
-	public DataNodeResolver dataNodeResolver(DataObjectSourceFactory dataObjectSourceFactory,
-			StringDataTypeConvertorManager stringDataTypeConvertorManager) {
-		return new DefaultDataNodeResolver(dataObjectSourceFactory, stringDataTypeConvertorManager);
-	}
-
-	@Bean
-	public XMLDataFileResolver dataFileResolver(DataNodeResolver dataNodeResolver) {
-		return new DefaultXMLDataFileResolver(dataNodeResolver);
-	}
-
-	// ==================================================数据文件生成器==================================================
-
-	@Bean
-	public DataFileGenerator dataFileGenerator(StringDataTypeConvertorManager stringDataTypeConvertorManager) {
-		return new DefaultXMLDataFileGenerator(stringDataTypeConvertorManager);
 	}
 
 }

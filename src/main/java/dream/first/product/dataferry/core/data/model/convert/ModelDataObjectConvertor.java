@@ -8,13 +8,15 @@ import java.util.List;
 
 import org.yelong.core.model.Modelable;
 
+import dream.first.product.dataferry.core.data.convert.DataObjectConvertor;
 import dream.first.product.dataferry.core.data.model.ModelDataObject;
 import dream.first.product.dataferry.core.data.model.ModelDataObjectSource;
+import dream.first.product.dataferry.core.data.model.ModelDataObjectSourceFactory;
 
 /**
  * 模型与数据对象转换器。模型与数据对象的相互转换
  */
-public interface ModelDataObjectConvertor {
+public interface ModelDataObjectConvertor extends DataObjectConvertor {
 
 	/**
 	 * 根据模型类型创建模型数据对象源
@@ -23,7 +25,9 @@ public interface ModelDataObjectConvertor {
 	 * @param modelClass 模型类
 	 * @return 模型数据对象源
 	 * @throws ModelDataObjectConvertException 转换异常
+	 * @deprecated {@link ModelDataObjectSourceFactory#create(Class)}
 	 */
+	@Deprecated
 	<M extends Modelable> ModelDataObjectSource<M> toDataObjectSource(Class<M> modelClass)
 			throws ModelDataObjectConvertException;
 
